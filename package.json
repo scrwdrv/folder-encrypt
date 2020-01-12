@@ -1,0 +1,35 @@
+{
+  "name": "folder-encrypt",
+  "version": "1.0.0",
+  "description": "Simple module that helps you encrypt & decrypt folder with password.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scrwdrv/folder-encrypt.git"
+  },
+  "keywords": [
+    "folder",
+    "encrypt",
+    "decrypt",
+    "aes",
+    "password",
+    "fs",
+    "tar"
+  ],
+  "author": "scrwdrv",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scrwdrv/folder-encrypt/issues"
+  },
+  "homepage": "https://github.com/scrwdrv/folder-encrypt#readme",
+  "devDependencies": {
+    "@types/node": "^13.1.6",
+    "@types/tar-fs": "^1.16.2"
+  },
+  "dependencies": {
+    "tar-fs": "^2.0.0"
+  }
+}
