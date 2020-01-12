@@ -35,6 +35,6 @@ folderEncrypt.decrypt({
     // But still considered `decrypted` due to there is no way knowing the original content.
 }).catch((err) => {
     console.log(err); 
-    // when using a wrong password on directory, `tar is corrupted` error will occured.
+    // when using a wrong password on directory decryption, a `tar is corrupted` error will occured.
 });
 ```
