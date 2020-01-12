@@ -26,7 +26,7 @@ export function encrypt(options: { password: string; input: string; output?: str
             writeStream.write(Buffer.concat([Buffer.from(isFile ? 'F' : 'D'), iv]), (err) => {
                 if (err) return reject(err);
                 writeStream.on('close', resolve);
-                (isFile ? fs.createReadStream : tar.pack)(options.input).pipe(cipher).pipe(writeStream);
+                (isFile ? fs.createReadStream : tar.pack)(options.input).pipe(cipher).pipe(writeStream).on('error', reject);;
             });
         } catch (err) {
             reject(err);
@@ -48,7 +48,7 @@ export function decrypt(options: { password: string; input: string; output?: str
                 outputStream = head.isFile ? fs.createWriteStream(options.output) : tar.extract(options.output);
 
             outputStream.on('finish', resolve);
-            readStream.pipe(cipher).pipe(outputStream);
+            readStream.pipe(cipher).pipe(outputStream).on('error', reject);
         } catch (err) {
             reject(err);
         }

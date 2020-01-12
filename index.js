@@ -23,7 +23,8 @@ function encrypt(options) {
                 if (err)
                     return reject(err);
                 writeStream.on('close', resolve);
-                (isFile ? fs.createReadStream : tar.pack)(options.input).pipe(cipher).pipe(writeStream);
+                (isFile ? fs.createReadStream : tar.pack)(options.input).pipe(cipher).pipe(writeStream).on('error', reject);
+                ;
             });
         }
         catch (err) {
@@ -41,7 +42,7 @@ function decrypt(options) {
         try {
             const head = await parseHead(options.input), cipher = crypto.createCipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), head.iv), readStream = fs.createReadStream(options.input, { start: 17 }), outputStream = head.isFile ? fs.createWriteStream(options.output) : tar.extract(options.output);
             outputStream.on('finish', resolve);
-            readStream.pipe(cipher).pipe(outputStream);
+            readStream.pipe(cipher).pipe(outputStream).on('error', reject);
         }
         catch (err) {
             reject(err);

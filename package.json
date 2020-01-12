@@ -1,7 +1,7 @@
 {
   "name": "folder-encrypt",
-  "version": "1.0.0",
-  "description": "Simple module that helps you encrypt & decrypt folder with password.",
+  "version": "1.0.2",
+  "description": "Simple module that helps you encrypt & decrypt folder/file with password.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
