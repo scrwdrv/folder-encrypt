@@ -44,6 +44,8 @@ folderEncrypt.encrypt({
     password: 'your-password',
     input: 'your-file-or-folder',
     output: writeStream // writable stream
+}).then(() => {
+    console.log('encrypted!');
 }).catch((err) => {
     console.log(err)
 });
