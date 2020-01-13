@@ -44,7 +44,7 @@ export function decrypt(options: { password: string; input: string; output?: str
 
         try {
             const head = await parseHead(options.input),
-                cipher = crypto.createCipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), head.iv),
+                cipher = crypto.createDecipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), head.iv),
                 readStream = fs.createReadStream(options.input, { start: 17 }),
                 outputStream = head.isFile ? fs.createWriteStream(options.output) : tar.extract(options.output);
 
