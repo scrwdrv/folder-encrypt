@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const tar = require("tar-fs");
 const fs = require("fs");
 const PATH = require("path");
+const stream_1 = require("stream");
 const algo = 'aes-256-ctr';
 function encrypt(options) {
     return new Promise(async (resolve, reject) => {
@@ -12,7 +13,7 @@ function encrypt(options) {
             options.output = PATH.join(input.dir, input.name + input.ext + '.encrypted');
         }
         try {
-            const iv = crypto.randomBytes(16), cipher = crypto.createCipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), iv), writeStream = fs.createWriteStream(options.output), isFile = await new Promise((resolve) => {
+            const iv = crypto.randomBytes(16), cipher = crypto.createCipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), iv), writeStream = options.output instanceof stream_1.Writable ? options.output : fs.createWriteStream(options.output), isFile = await new Promise((resolve) => {
                 fs.stat(options.input, (err, stats) => {
                     if (err)
                         return reject(err);

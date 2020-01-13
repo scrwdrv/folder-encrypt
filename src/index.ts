@@ -2,10 +2,11 @@ import * as crypto from 'crypto';
 import * as tar from 'tar-fs';
 import * as fs from 'fs';
 import * as PATH from 'path';
+import { Writable } from 'stream';
 
 const algo = 'aes-256-ctr';
 
-export function encrypt(options: { password: string; input: string; output?: string }) {
+export function encrypt(options: { password: string; input: string; output?: string | Writable }) {
     return new Promise(async (resolve, reject) => {
         if (!options.output) {
             const input = PATH.parse(options.input);
@@ -15,7 +16,7 @@ export function encrypt(options: { password: string; input: string; output?: str
         try {
             const iv = crypto.randomBytes(16),
                 cipher = crypto.createCipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), iv),
-                writeStream = fs.createWriteStream(options.output),
+                writeStream = options.output instanceof Writable ? options.output : fs.createWriteStream(options.output as string),
                 isFile = await new Promise((resolve: (isFile: boolean) => void) => {
                     fs.stat(options.input, (err, stats) => {
                         if (err) return reject(err);

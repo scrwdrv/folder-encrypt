@@ -23,6 +23,31 @@ folderEncrypt.encrypt({
     console.log(err);
 });
 ```
+
+#### Stream as Output
+```js
+import * as folderEncrypt from 'folder-encrypt';
+import { Writable } from 'stream';
+import * as fs from 'fs';
+
+const outputs = [
+    fs.createWriteStream('./output1'),
+    fs.createWriteStream('./output2')
+], writeStream = new Writable({
+    write(chunk, encoding, next) {
+        for (let i = outputs.length; i--;)  outputs[i].write(chunk);
+        next();
+    }
+});
+
+folderEncrypt.encrypt({
+    password: 'your-password',
+    input: 'your-file-or-folder',
+    output: writeStream // writable stream
+}).catch((err) => {
+    console.log(err)
+});
+```
 ### Folder/File Decryption
 ```js
 folderEncrypt.decrypt({
