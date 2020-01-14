@@ -24,8 +24,7 @@ function encrypt(options) {
                 if (err)
                     return reject(err);
                 writeStream.on('finish', resolve);
-                (isFile ? fs.createReadStream : tar.pack)(options.input).pipe(cipher).pipe(writeStream).on('error', reject);
-                ;
+                (isFile ? fs.createReadStream : tar.pack)(options.input).on('error', reject).pipe(cipher).pipe(writeStream);
             });
         }
         catch (err) {
