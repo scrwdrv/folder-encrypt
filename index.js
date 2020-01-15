@@ -8,12 +8,23 @@ const stream_1 = require("stream");
 const algo = 'aes-256-ctr';
 function encrypt(options) {
     return new Promise(async (resolve, reject) => {
+        if (!options.password && !options.cipher)
+            return reject(`Missing password`);
         if (!options.output) {
             const input = PATH.parse(options.input);
             options.output = PATH.join(input.dir, input.name + input.ext + '.encrypted');
         }
         try {
-            const iv = crypto.randomBytes(16), cipher = crypto.createCipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), iv), writeStream = options.output instanceof stream_1.Writable ? options.output : fs.createWriteStream(options.output), isFile = await new Promise((resolve) => {
+            let iv, cipher;
+            if (options.cipher) {
+                iv = typeof options.cipher.iv === 'string' ? Buffer.from(options.cipher.iv) : options.cipher.iv;
+                cipher = crypto.createCipheriv(options.cipher.algo, options.cipher.key, options.cipher.iv);
+            }
+            else {
+                iv = crypto.randomBytes(16);
+                cipher = crypto.createCipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), iv);
+            }
+            const writeStream = options.output instanceof stream_1.Writable ? options.output : fs.createWriteStream(options.output), isFile = await new Promise((resolve) => {
                 fs.stat(options.input, (err, stats) => {
                     if (err)
                         return reject(err);
@@ -35,12 +46,20 @@ function encrypt(options) {
 exports.encrypt = encrypt;
 function decrypt(options) {
     return new Promise(async (resolve, reject) => {
+        if (!options.password && !options.cipher)
+            return reject(`Missing password`);
         if (!options.output) {
             const input = PATH.parse(options.input);
             options.output = PATH.join(input.dir, input.name);
         }
         try {
-            const head = await parseHead(options.input), cipher = crypto.createDecipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), head.iv), readStream = fs.createReadStream(options.input, { start: 17 }), outputStream = head.isFile ? fs.createWriteStream(options.output) : tar.extract(options.output);
+            let cipher;
+            const head = await parseHead(options.input, options.cipher ? options.cipher.ivLength : 16);
+            if (options.cipher)
+                cipher = crypto.createDecipheriv(options.cipher.algo, options.cipher.key, head.iv);
+            else
+                cipher = crypto.createDecipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), head.iv);
+            const readStream = fs.createReadStream(options.input, { start: 17 }), outputStream = head.isFile ? fs.createWriteStream(options.output) : tar.extract(options.output);
             outputStream.on('finish', resolve);
             readStream.pipe(cipher).pipe(outputStream).on('error', reject);
         }
@@ -50,13 +69,13 @@ function decrypt(options) {
     });
 }
 exports.decrypt = decrypt;
-function parseHead(path) {
+function parseHead(path, ivLength) {
     return new Promise((resolve, reject) => {
         fs.open(path, 'r', (err, fd) => {
             if (err)
                 return reject(err);
-            let buffer = Buffer.alloc(17);
-            fs.read(fd, buffer, 0, 17, 0, (err) => {
+            let buffer = Buffer.alloc(ivLength + 1);
+            fs.read(fd, buffer, 0, ivLength + 1, 0, (err) => {
                 if (err)
                     return reject(err);
                 const type = buffer.toString()[0];
