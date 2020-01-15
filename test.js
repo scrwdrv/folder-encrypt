@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("./index");
-const crypto = require("crypto");
-const t = Date.now();
-index_1.encrypt({
+/* const t = Date.now();
+
+encrypt({
     input: './node_modules',
     cipher: {
         algo: 'aes-256-gcm',
@@ -11,7 +10,9 @@ index_1.encrypt({
         iv: crypto.randomBytes(16)
     }
 }).then(() => {
-    console.log(Date.now() - t);
+    console.log(Date.now() - t)
 }).catch(e => {
-    console.log(e);
-});
+    console.log(e)
+})
+
+ */

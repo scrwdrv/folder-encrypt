@@ -1,7 +1,7 @@
-import { encrypt } from './index';
+import { encrypt,decrypt } from './index';
 import * as crypto from 'crypto';
 
-const t = Date.now();
+/* const t = Date.now();
 
 encrypt({
     input: './node_modules',
@@ -15,3 +15,5 @@ encrypt({
 }).catch(e => {
     console.log(e)
 }) 
+
+ */

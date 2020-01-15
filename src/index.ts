@@ -7,7 +7,10 @@ import { Writable } from 'stream';
 const algo = 'aes-256-ctr';
 
 export function encrypt(options: {
-    password?: string; input: string; output?: string | Writable; cipher?: {
+    password?: string;
+    input: string;
+    output?: string | Writable;
+    cipher?: {
         algo: string;
         key: Buffer | string;
         iv: Buffer | string;
@@ -52,7 +55,10 @@ export function encrypt(options: {
 }
 
 export function decrypt(options: {
-    password?: string; input: string; output?: string; cipher?: {
+    password?: string;
+    input: string;
+    output?: string;
+    cipher?: {
         algo: string;
         key: Buffer | string;
         ivLength: number;
@@ -73,7 +79,7 @@ export function decrypt(options: {
             if (options.cipher) cipher = crypto.createDecipheriv(options.cipher.algo, options.cipher.key, head.iv);
             else cipher = crypto.createDecipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), head.iv);
 
-            const readStream = fs.createReadStream(options.input, { start: 17 }),
+            const readStream = fs.createReadStream(options.input, { start: options.cipher ? options.cipher.ivLength + 1 : 17 }),
                 outputStream = head.isFile ? fs.createWriteStream(options.output) : tar.extract(options.output);
 
             outputStream.on('finish', resolve);

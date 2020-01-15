@@ -59,7 +59,7 @@ function decrypt(options) {
                 cipher = crypto.createDecipheriv(options.cipher.algo, options.cipher.key, head.iv);
             else
                 cipher = crypto.createDecipheriv(algo, crypto.createHash('sha256').update(options.password).digest(), head.iv);
-            const readStream = fs.createReadStream(options.input, { start: 17 }), outputStream = head.isFile ? fs.createWriteStream(options.output) : tar.extract(options.output);
+            const readStream = fs.createReadStream(options.input, { start: options.cipher ? options.cipher.ivLength + 1 : 17 }), outputStream = head.isFile ? fs.createWriteStream(options.output) : tar.extract(options.output);
             outputStream.on('finish', resolve);
             readStream.pipe(cipher).pipe(outputStream).on('error', reject);
         }
